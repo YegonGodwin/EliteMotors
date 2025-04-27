@@ -288,6 +288,60 @@ function reserveCar(carId, event) {
     };
 }
 
+// Handle navigation
+function handleNavigation() {
+    const navLinks = document.querySelectorAll('.nav-links a');
+    const sections = document.querySelectorAll('section[id]');
+
+    // Smooth scroll to section
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').substring(1);
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) {
+                targetSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+
+    // Update active link on scroll
+    function updateActiveLink() {
+        const scrollPosition = window.scrollY + 100; // Offset for header
+
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.offsetHeight;
+            const sectionId = section.getAttribute('id');
+
+            if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${sectionId}`) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
+    }
+
+    window.addEventListener('scroll', updateActiveLink);
+    updateActiveLink(); // Initial check
+}
+
+// Handle contact form submission
+function handleContactForm() {
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Here you would typically send the form data to your backend
+            alert('Thank you for your message! We will get back to you soon.');
+            contactForm.reset();
+        });
+    }
+}
+
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
     displayCars();
@@ -297,4 +351,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const recommendations = recommendationEngine.getRecommendations();
     
     // Display recommendations (implementation would go here)
+    
+    // Initialize navigation
+    handleNavigation();
+    
+    // Initialize contact form
+    handleContactForm();
 });
