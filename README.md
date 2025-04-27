@@ -17,11 +17,15 @@ A modern, responsive car selling platform with AI-powered recommendations and dy
 - JavaScript (ES6+)
 - Font Awesome for icons
 - Local Storage for data persistence
+- PHP -Backend
 
 ## Project Structure
 
 ```
 AfricaWheels/
+
+├── assets/
+│   └── favicon
 ├── css/
 │   └── styles.css
 ├── js/
