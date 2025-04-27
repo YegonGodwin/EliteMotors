@@ -91,6 +91,7 @@ function displayCars(carsToDisplay = cars) {
                 <img src="${car.image}" alt="${car.make} ${car.model}" class="car-image">
                 <div class="car-overlay">
                     <button onclick="showCarDetails(${car.id})" class="view-details">View Details</button>
+                    <button onclick="reserveCar(${car.id}, event)" class="reserve-button">Reserve Now</button>
                 </div>
             </div>
             <div class="car-details">
@@ -181,7 +182,10 @@ function showCarDetails(carId) {
                             </div>
                         </div>
                     </div>
-                    <button class="cta-button primary">Schedule Test Drive</button>
+                    <div class="modal-actions">
+                        <button class="cta-button primary" onclick="reserveCar(${car.id}, event)">Reserve This Car</button>
+                        <button class="cta-button secondary">Schedule Test Drive</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -203,6 +207,83 @@ function showCarDetails(carId) {
         if (event.target === modal) {
             modal.classList.remove('show');
             setTimeout(() => modal.style.display = 'none', 300);
+        }
+    };
+}
+
+// Reserve car functionality
+function reserveCar(carId, event) {
+    event.stopPropagation(); // Prevent modal from opening when clicking reserve button in card
+    const car = cars.find(c => c.id === carId);
+    if (!car) return;
+
+    // Create reservation modal
+    const reservationModal = document.createElement('div');
+    reservationModal.className = 'modal reservation-modal';
+    reservationModal.innerHTML = `
+        <div class="modal-content reservation-content">
+            <span class="close-modal">&times;</span>
+            <h2>Reserve ${car.make} ${car.model} ${car.year}</h2>
+            <form id="reservationForm" class="reservation-form">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="date">Preferred Date</label>
+                    <input type="date" id="date" required min="${new Date().toISOString().split('T')[0]}">
+                </div>
+                <div class="form-group">
+                    <label for="message">Additional Notes</label>
+                    <textarea id="message" rows="3"></textarea>
+                </div>
+                <button type="submit" class="cta-button primary">Confirm Reservation</button>
+            </form>
+        </div>
+    `;
+
+    document.body.appendChild(reservationModal);
+
+    // Show modal with animation
+    reservationModal.style.display = 'flex';
+    setTimeout(() => reservationModal.classList.add('show'), 10);
+
+    // Handle form submission
+    const form = reservationModal.querySelector('#reservationForm');
+    form.onsubmit = (e) => {
+        e.preventDefault();
+        // Here you would typically send the form data to your backend
+        alert('Reservation submitted successfully! We will contact you shortly.');
+        reservationModal.classList.remove('show');
+        setTimeout(() => {
+            document.body.removeChild(reservationModal);
+        }, 300);
+    };
+
+    // Close modal functionality
+    const closeBtn = reservationModal.querySelector('.close-modal');
+    closeBtn.onclick = () => {
+        reservationModal.classList.remove('show');
+        setTimeout(() => {
+            document.body.removeChild(reservationModal);
+        }, 300);
+    };
+
+    // Close on outside click
+    reservationModal.onclick = (e) => {
+        if (e.target === reservationModal) {
+            reservationModal.classList.remove('show');
+            setTimeout(() => {
+                document.body.removeChild(reservationModal);
+            }, 300);
         }
     };
 }
